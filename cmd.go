@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 )
@@ -136,32 +135,13 @@ func Run(cmd string) {
 	first, args := Parse(cmd)
 
 	p := exec.Command(first, args...)
-
-	stdout, err := p.StdoutPipe()
-	if err != nil {
+	p.Stdout = os.Stdout
+	p.Stderr = os.Stderr
+	if err := p.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "%v", err)
 		os.Exit(1)
 	}
-	go func() {
-		io.Copy(os.Stdout, stdout)
-		stdout.Close()
-	}()
-
-	stderr, err := p.StderrPipe()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v", err)
-		os.Exit(1)
-	}
-
-	go func() {
-		io.Copy(os.Stderr, stderr)
-		stderr.Close()
-	}()
-
-	if err := p.Start(); err != nil {
-		fmt.Fprintf(os.Stderr, "%v", err)
-		os.Exit(1)
-	}
+	fmt.Println("ok")
 }
 
 // Get runs cmd and returns its output. Cmd's stderr is redirected to
@@ -171,18 +151,7 @@ func Get(cmd string) string {
 	first, args := Parse(cmd)
 
 	p := exec.Command(first, args...)
-
-	stderr, err := p.StderrPipe()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v", err)
-		os.Exit(1)
-	}
-
-	go func() {
-		io.Copy(os.Stderr, stderr)
-		stderr.Close()
-	}()
-
+	p.Stderr = os.Stderr
 	output, err := p.Output()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v", err)
