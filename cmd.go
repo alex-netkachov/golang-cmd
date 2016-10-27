@@ -142,7 +142,6 @@ func Run(cmd string) {
 		fmt.Fprintf(os.Stderr, "%v", err)
 		os.Exit(1)
 	}
-	fmt.Println("ok")
 }
 
 // Get runs cmd and returns its output. Cmd's stderr is redirected to
