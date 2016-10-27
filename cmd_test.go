@@ -2,7 +2,8 @@ package cmd
 
 import "testing"
 
-// Test_ParseCmd checks correctness of the method ParseCmd by running various test cases.
+// Test_Parse checks correctness of the command line
+// parsing by running test cases.
 func Test_Parse(t *testing.T) {
 	test(t, ``, []string{""})
 	test(t, `a`, []string{"a"})
@@ -25,7 +26,8 @@ func Test_Parse(t *testing.T) {
 }
 
 func test(t *testing.T, test string, expected []string) {
-	actual := Parse(test)
+	cmd, args := Parse(test)
+	actual := append([]string{cmd}, args...)
 	if len(actual) != len(expected) {
 		t.Errorf("%#v => %#v != %#v", test, actual, expected)
 	}

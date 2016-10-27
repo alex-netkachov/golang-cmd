@@ -1,7 +1,7 @@
 package cmd
 
-// Parse parses the command line into list of command and arguments.
-func Parse(cmd string) []string {
+// Parse parses the command line into a command and a list of arguments.
+func Parse(cmd string) (string, []string) {
 	const (
 		Inquote       = 1
 		InquoteEscape = 2
@@ -11,11 +11,6 @@ func Parse(cmd string) []string {
 		TextQuote     = 6
 		TextSpace     = 7
 	)
-
-	// special case
-	if cmd == "" {
-		return []string{""}
-	}
 
 	items := []string{}
 	item := ""
@@ -122,5 +117,8 @@ func Parse(cmd string) []string {
 		// ignore
 	}
 
-	return items
+	if len(items) == 0 {
+		return "", []string{}
+	}
+	return items[0], items[1:]
 }
