@@ -1,5 +1,12 @@
 package cmd
 
+import (
+	"fmt"
+	"io"
+	"os"
+	"os/exec"
+)
+
 // Parse parses the command line into a command and a list of arguments.
 func Parse(cmd string) (string, []string) {
 	const (
@@ -121,4 +128,66 @@ func Parse(cmd string) (string, []string) {
 		return "", []string{}
 	}
 	return items[0], items[1:]
+}
+
+// Run runs cmd and redirects its output to stdout and stderr. If
+// the returncode of the cmd is not 0, terminates the current process.
+func Run(cmd string) {
+	first, args := Parse(cmd)
+
+	p := exec.Command(first, args...)
+
+	stdout, err := p.StdoutPipe()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
+		os.Exit(1)
+	}
+	go func() {
+		io.Copy(os.Stdout, stdout)
+		stdout.Close()
+	}()
+
+	stderr, err := p.StderrPipe()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
+		os.Exit(1)
+	}
+
+	go func() {
+		io.Copy(os.Stderr, stderr)
+		stderr.Close()
+	}()
+
+	if err := p.Start(); err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
+		os.Exit(1)
+	}
+}
+
+// Get runs cmd and returns its output. Cmd's stderr is redirected to
+// the os.Stderr. If the returncode of the cmd is not 0, terminates
+// the current process.
+func Get(cmd string) string {
+	first, args := Parse(cmd)
+
+	p := exec.Command(first, args...)
+
+	stderr, err := p.StderrPipe()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
+		os.Exit(1)
+	}
+
+	go func() {
+		io.Copy(os.Stderr, stderr)
+		stderr.Close()
+	}()
+
+	output, err := p.Output()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
+		os.Exit(1)
+	}
+
+	return string(output)
 }

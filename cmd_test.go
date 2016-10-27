@@ -5,27 +5,27 @@ import "testing"
 // Test_Parse checks correctness of the command line
 // parsing by running test cases.
 func Test_Parse(t *testing.T) {
-	test(t, ``, []string{""})
-	test(t, `a`, []string{"a"})
-	test(t, `a `, []string{"a"})
-	test(t, `a  `, []string{"a"})
-	test(t, `ab`, []string{"ab"})
-	test(t, `ab `, []string{"ab"})
-	test(t, `ab  `, []string{"ab"})
-	test(t, `a c`, []string{"a", "c"})
-	test(t, `a c `, []string{"a", "c"})
-	test(t, `a cd`, []string{"a", "cd"})
-	test(t, `a cd `, []string{"a", "cd"})
-	test(t, `""`, []string{""})
-	test(t, `""""`, []string{""})
-	test(t, `" "`, []string{" "})
-	test(t, `"a"`, []string{"a"})
-	test(t, `"a"""`, []string{"a"})
-	test(t, `a""`, []string{"a"})
-	test(t, `a""b`, []string{"ab"})
+	testParse(t, ``, []string{""})
+	testParse(t, `a`, []string{"a"})
+	testParse(t, `a `, []string{"a"})
+	testParse(t, `a  `, []string{"a"})
+	testParse(t, `ab`, []string{"ab"})
+	testParse(t, `ab `, []string{"ab"})
+	testParse(t, `ab  `, []string{"ab"})
+	testParse(t, `a c`, []string{"a", "c"})
+	testParse(t, `a c `, []string{"a", "c"})
+	testParse(t, `a cd`, []string{"a", "cd"})
+	testParse(t, `a cd `, []string{"a", "cd"})
+	testParse(t, `""`, []string{""})
+	testParse(t, `""""`, []string{""})
+	testParse(t, `" "`, []string{" "})
+	testParse(t, `"a"`, []string{"a"})
+	testParse(t, `"a"""`, []string{"a"})
+	testParse(t, `a""`, []string{"a"})
+	testParse(t, `a""b`, []string{"ab"})
 }
 
-func test(t *testing.T, test string, expected []string) {
+func testParse(t *testing.T, test string, expected []string) {
 	cmd, args := Parse(test)
 	actual := append([]string{cmd}, args...)
 	if len(actual) != len(expected) {
