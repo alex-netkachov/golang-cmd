@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 // Parse parses the command line into a command and a list of arguments.
@@ -159,4 +160,17 @@ func Get(cmd string) string {
 	}
 
 	return string(output)
+}
+
+// GetLines runs cmd and returns its output as list of strings. Cmd's
+// stderr is redirected to the os.Stderr. If the returncode of the
+// cmd is not 0, terminates the current process.
+func GetLines(cmd string) []string {
+	lines := strings.Split(Get(cmd), "\n")
+	// most of the shell commands print the trailing endline
+	// at the end so it can be removed
+	if len(lines) > 0 && lines[len(lines)-1] == "" {
+		return lines[0 : len(lines)-1]
+	}
+	return lines
 }

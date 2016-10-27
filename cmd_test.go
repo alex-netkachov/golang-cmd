@@ -37,3 +37,17 @@ func testParse(t *testing.T, test string, expected []string) {
 		}
 	}
 }
+
+func Test_GetLines(t *testing.T) {
+	lines := GetLines("go version")
+	if len(lines) != 1 {
+		t.Errorf("Expect single line output from `go version`.")
+	}
+}
+
+func Test_Get(t *testing.T) {
+	output := Get("go version")
+	if output == "" {
+		t.Errorf("Expect non-empty output from `go version`.")
+	}
+}
