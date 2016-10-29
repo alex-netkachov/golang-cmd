@@ -139,7 +139,7 @@ func Run(cmd string) {
 	p.Stdout = os.Stdout
 	p.Stderr = os.Stderr
 	if err := p.Run(); err != nil {
-		fmt.Fprintf(os.Stderr, "%v", err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 }
@@ -154,7 +154,7 @@ func Get(cmd string) string {
 	p.Stderr = os.Stderr
 	output, err := p.Output()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v", err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 
